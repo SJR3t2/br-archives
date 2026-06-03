@@ -127,7 +127,7 @@ internal static class Program
 				}
 				break;
 
-			case "-ResultPathExtBr":
+			case "-ResultPathExtAddBr":
 				try
 				{
 					resultPathExt = ".br";
@@ -202,7 +202,7 @@ internal static class Program
 		Console.WriteLine("  -Delete { false, true }");
 		Console.WriteLine("  -Threads 1 //0 use the number of processors");
 		Console.WriteLine(" Optional only one");
-		Console.WriteLine("  -ResultPathExtBr");
+		Console.WriteLine("  -ResultPathExtAddBr");
 		Console.WriteLine("  -ResultPathExtAdd .br");
 		Console.WriteLine("  -ResultPathExtReplace .br");
 		Console.WriteLine();
