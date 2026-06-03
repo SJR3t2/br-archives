@@ -162,7 +162,7 @@ internal static class Program
 		}
 		if (resultPath == null)
 		{
-			errors.Add("Requires only one of -ResultPathExtRemove or -ResultPathExtReplace");
+			resultPath = ResultPathExtRemove;
 		}
 
 		if (errors.Count <= 0)
@@ -181,7 +181,7 @@ internal static class Program
 		Console.WriteLine("br-dec.exe");
 		Console.WriteLine(" Required");
 		Console.WriteLine("  -SearchPattern *.*");
-		Console.WriteLine(" Requires only one");
+		Console.WriteLine(" Optional only one");
 		Console.WriteLine("  -ResultPathExtRemove");
 		Console.WriteLine("  -ResultPathExtReplace .ext");
 		Console.WriteLine(" Optional");
@@ -190,6 +190,9 @@ internal static class Program
 		Console.WriteLine("  -SearchShare { None, Read }");
 		Console.WriteLine("  -Delete { false, true }");
 		Console.WriteLine("  -Threads 1 //0 use the number of processors");
+		Console.WriteLine(" Optional only one");
+		Console.WriteLine("  -ResultPathExtRemove");
+		Console.WriteLine("  -ResultPathExtReplace .ext");
 		Console.WriteLine();
 
 		if (errors != null && errors.Count > 0)
