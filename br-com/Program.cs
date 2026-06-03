@@ -24,6 +24,8 @@ internal static class Program
 	private static string? searchPattern = null;
 	private static SearchOption searchOption = SearchOption.AllDirectories;
 	private static FileShare searchShare = FileShare.None;
+	private static Converter<string, string> resultPath;
+	private static string? resultPathExt;
 	private static bool delete = false;
 	private static int threadsCount = 1;
 
@@ -124,6 +126,42 @@ internal static class Program
 					errors.Add("Problems processing -Threads " + exception.Message);
 				}
 				break;
+
+			case "-ResultPathExtBr":
+				try
+				{
+					resultPathExt = ".br";
+					resultPath = ResultPathExtAdd;
+				}
+				catch (Exception exception)
+				{
+					errors.Add("Problems processing -ResultPathExtReplace " + exception.Message);
+				}
+				break;
+
+			case "-ResultPathExtAdd":
+				try
+				{
+					resultPathExt = args[++i];
+					resultPath = ResultPathExtAdd;
+				}
+				catch (Exception exception)
+				{
+					errors.Add("Problems processing -ResultPathExtReplace " + exception.Message);
+				}
+				break;
+
+			case "-ResultPathExtReplace":
+				try
+				{
+					resultPathExt = args[++i];
+					resultPath = ResultPathExtReplace;
+				}
+				catch (Exception exception)
+				{
+					errors.Add("Problems processing -ResultPathExtReplace " + exception.Message);
+				}
+				break;
 			}
 		}
 
@@ -134,6 +172,11 @@ internal static class Program
 		if (searchPattern == null)
 		{
 			errors.Add("Missing -SearchPattern");
+		}
+		if (resultPath == null)
+		{
+			resultPathExt = ".br";
+			resultPath = ResultPathExtAdd;
 		}
 
 		if (errors.Count <= 0)
@@ -158,6 +201,10 @@ internal static class Program
 		Console.WriteLine("  -SearchShare { None, Read }");
 		Console.WriteLine("  -Delete { false, true }");
 		Console.WriteLine("  -Threads 1 //0 use the number of processors");
+		Console.WriteLine(" Optional only one");
+		Console.WriteLine("  -ResultPathExtBr");
+		Console.WriteLine("  -ResultPathExtAdd .br");
+		Console.WriteLine("  -ResultPathExtReplace .br");
 		Console.WriteLine();
 
 		if (errors != null && errors.Count > 0)
@@ -257,7 +304,7 @@ internal static class Program
 			}
 
 			var starting = Stopwatch.GetTimestamp();
-			var resultPath = sourcePath + ".br";
+			var resultPath = Program.resultPath(sourcePath);
 			var resultUndo = false;
 			var sourceStream = (FileStream?)null;
 			var resultStream = (FileStream?)null;
@@ -357,5 +404,19 @@ internal static class Program
 				}
 			}
 		}
+	}
+
+	private static string ResultPathExtAdd(string sourcePath)
+	{
+		var resultPath = sourcePath + resultPathExt;
+		return resultPath;
+	}
+
+	private static string ResultPathExtReplace(string sourcePath)
+	{
+		var resultPath = Path.Combine(
+			Path.GetDirectoryName(sourcePath),
+			Path.GetFileNameWithoutExtension(sourcePath) + resultPathExt);
+		return resultPath;
 	}
 }
