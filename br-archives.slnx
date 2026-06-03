@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="br-com/br-com.csproj" />
+  <Project Path="br-dec/br-dec.csproj" />
+</Solution>
