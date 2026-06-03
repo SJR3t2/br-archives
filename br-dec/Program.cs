@@ -28,6 +28,7 @@ internal static class Program
 	private static string? resultPathExt;
 	private static bool delete = false;
 	private static int threadsCount = 1;
+	private static ThreadPriority threadPriority = ThreadPriority.Lowest;
 
 	private static IEnumerator<string> files;
 	private static long filesCount = 0;
@@ -127,6 +128,17 @@ internal static class Program
 				}
 				break;
 
+			case "-ThreadPriority":
+				try
+				{
+					threadPriority = Enum.Parse<ThreadPriority>(args[++i]);
+				}
+				catch (Exception exception)
+				{
+					errors.Add("Problems processing -ThreadPriority " + exception.Message);
+				}
+				break;
+
 			case "-ResultPathExtRemove":
 				try
 				{
@@ -190,6 +202,7 @@ internal static class Program
 		Console.WriteLine("  -SearchShare { None, Read }");
 		Console.WriteLine("  -Delete { false, true }");
 		Console.WriteLine("  -Threads 1 //0 use the number of processors");
+		Console.WriteLine("  -ThreadPriority { Lowest, BelowNormal, Normal, AboveNormal, Highest }");
 		Console.WriteLine(" Optional only one");
 		Console.WriteLine("  -ResultPathExtRemove");
 		Console.WriteLine("  -ResultPathExtReplace .ext");
@@ -232,6 +245,7 @@ internal static class Program
 			for (var i = threads.Length - 1; i >= 0; --i)
 			{
 				var thread = new Thread(threadStart);
+				thread.Priority = threadPriority;
 				threads[i] = thread;
 				thread.Start();
 			}
