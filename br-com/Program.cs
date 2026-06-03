@@ -27,6 +27,7 @@ internal static class Program
 	private static FileShare searchShare = FileShare.None;
 	private static Converter<string, string> resultPath;
 	private static string? resultPathExt;
+	private static CompressionLevel compression = CompressionLevel.SmallestSize;
 	private static bool delete = false;
 	private static int threadsCount = 1;
 	private static ThreadPriority? threadPriority = ThreadPriority.Lowest;
@@ -207,6 +208,17 @@ internal static class Program
 					errors.Add("Problems processing -ResultPathExtReplace " + exception.Message);
 				}
 				break;
+
+			case "-Compression":
+				try
+				{
+					compression = Enum.Parse<CompressionLevel>(args[++i]);
+				}
+				catch (Exception exception)
+				{
+					errors.Add("Problems processing -Compression " + exception.Message);
+				}
+				break;
 			}
 		}
 
@@ -248,6 +260,7 @@ internal static class Program
 		Console.WriteLine("  -Threads 1 //0 use the number of processors");
 		Console.WriteLine("  -ThreadPriority { Lowest, BelowNormal, Normal, AboveNormal, Highest, Leave }");
 		Console.WriteLine("  -ProcessPriority { Idle, BelowNormal, Normal, AboveNormal, High, RealTime, Leave }");
+		Console.WriteLine("  -Compression { SmallestSize, Optimal, Fastest, NoCompression }");
 		Console.WriteLine(" Optional only one");
 		Console.WriteLine("  -ResultPathExtAddBr");
 		Console.WriteLine("  -ResultPathExtAdd .br");
@@ -394,7 +407,7 @@ internal static class Program
 				}
 				try
 				{
-					resultWriter = new BrotliStream(resultStream, CompressionLevel.SmallestSize);
+					resultWriter = new BrotliStream(resultStream, compression);
 					while (true)
 					{
 						var read = sourceStream.Read(buffer, 0, bufferLength);
