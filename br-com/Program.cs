@@ -30,6 +30,7 @@ internal static class Program
 	private static bool delete = false;
 	private static int threadsCount = 1;
 	private static ThreadPriority? threadPriority = ThreadPriority.Lowest;
+	private static ProcessPriorityClass? processPriority = ProcessPriorityClass.Idle;
 
 	private static IEnumerator<string> files;
 	private static long filesCount = 0;
@@ -150,6 +151,27 @@ internal static class Program
 				}
 				break;
 
+			case "-ProcessPriority":
+				try
+				{
+					var parse = args[++i];
+					switch (parse)
+					{
+					default:
+						processPriority = Enum.Parse<ProcessPriorityClass>(parse);
+						break;
+
+					case "Leave":
+						processPriority = null;
+						break;
+					}
+				}
+				catch (Exception exception)
+				{
+					errors.Add("Problems processing -ProcessPriority " + exception.Message);
+				}
+				break;
+
 			case "-ResultPathExtAddBr":
 				try
 				{
@@ -225,6 +247,7 @@ internal static class Program
 		Console.WriteLine("  -Delete { false, true }");
 		Console.WriteLine("  -Threads 1 //0 use the number of processors");
 		Console.WriteLine("  -ThreadPriority { Lowest, BelowNormal, Normal, AboveNormal, Highest, Leave }");
+		Console.WriteLine("  -ProcessPriority { Idle, BelowNormal, Normal, AboveNormal, High, RealTime, Leave }");
 		Console.WriteLine(" Optional only one");
 		Console.WriteLine("  -ResultPathExtAddBr");
 		Console.WriteLine("  -ResultPathExtAdd .br");
@@ -261,6 +284,12 @@ internal static class Program
 		try
 		{
 			var starting = Stopwatch.GetTimestamp();
+
+			if (processPriority.HasValue)
+			{
+				Process.GetCurrentProcess().PriorityClass = processPriority.Value;
+			}
+
 			files = Directory.EnumerateFiles(searchPath, searchPattern, searchOption).GetEnumerator();
 
 			var threads = new Thread[threadsCount];
