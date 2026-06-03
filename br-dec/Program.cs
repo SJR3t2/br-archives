@@ -24,6 +24,8 @@ internal static class Program
 	private static string? searchPattern = null;
 	private static SearchOption searchOption = SearchOption.AllDirectories;
 	private static FileShare searchShare = FileShare.None;
+	private static Converter<string, string> resultPath;
+	private static string? resultPathExt;
 	private static bool delete = false;
 	private static int threadsCount = 1;
 
@@ -124,6 +126,29 @@ internal static class Program
 					errors.Add("Problems processing -Threads " + exception.Message);
 				}
 				break;
+
+			case "-ResultPathExtRemove":
+				try
+				{
+					resultPath = ResultPathExtRemove;
+				}
+				catch (Exception exception)
+				{
+					errors.Add("Problems processing -ResultPathExtRemove " + exception.Message);
+				}
+				break;
+
+			case "-ResultPathExtReplace":
+				try
+				{
+					resultPathExt = args[++i];
+					resultPath = ResultPathExtReplace;
+				}
+				catch (Exception exception)
+				{
+					errors.Add("Problems processing -ResultPathExtReplace " + exception.Message);
+				}
+				break;
 			}
 		}
 
@@ -134,6 +159,10 @@ internal static class Program
 		if (searchPattern == null)
 		{
 			errors.Add("Missing -SearchPattern");
+		}
+		if (resultPath == null)
+		{
+			errors.Add("Requires only one of -ResultPathExtRemove or -ResultPathExtReplace");
 		}
 
 		if (errors.Count <= 0)
@@ -152,6 +181,9 @@ internal static class Program
 		Console.WriteLine("br-dec.exe");
 		Console.WriteLine(" Required");
 		Console.WriteLine("  -SearchPattern *.*");
+		Console.WriteLine(" Requires only one");
+		Console.WriteLine("  -ResultPathExtRemove");
+		Console.WriteLine("  -ResultPathExtReplace .ext");
 		Console.WriteLine(" Optional");
 		Console.WriteLine("  -SearchPath .");
 		Console.WriteLine("  -SearchOption { AllDirectories, TopDirectoryOnly }");
@@ -257,9 +289,7 @@ internal static class Program
 			}
 
 			var starting = Stopwatch.GetTimestamp();
-			var resultPath = Path.Combine(
-				Path.GetDirectoryName(sourcePath),
-				Path.GetFileNameWithoutExtension(sourcePath));
+			var resultPath = Program.resultPath(sourcePath);
 			var resultUndo = false;
 			var sourceStream = (FileStream?)null;
 			var resultStream = (FileStream?)null;
@@ -359,5 +389,21 @@ internal static class Program
 				}
 			}
 		}
+	}
+
+	private static string ResultPathExtRemove(string sourcePath)
+	{
+		var resultPath = Path.Combine(
+			Path.GetDirectoryName(sourcePath),
+			Path.GetFileNameWithoutExtension(sourcePath));
+		return resultPath;
+	}
+
+	private static string ResultPathExtReplace(string sourcePath)
+	{
+		var resultPath = Path.Combine(
+			Path.GetDirectoryName(sourcePath),
+			Path.GetFileNameWithoutExtension(sourcePath) + resultPathExt);
+		return resultPath;
 	}
 }
