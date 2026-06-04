@@ -362,7 +362,7 @@ internal static class Program
 				{
 					lock (Console.Out)
 					{
-						Console.Error.WriteLine("{0} Can't open", resultPath);
+						Console.Error.WriteLine("{0} : Can't open", resultPath);
 					}
 					continue;
 				}
@@ -374,7 +374,7 @@ internal static class Program
 				{
 					lock (Console.Out)
 					{
-						Console.Error.WriteLine("{0} Can't create", resultPath);
+						Console.Error.WriteLine("{0} : Can't create", resultPath);
 					}
 					continue;
 				}
@@ -396,7 +396,7 @@ internal static class Program
 					resultUndo = true;
 					lock (Console.Out)
 					{
-						Console.Error.WriteLine("{0} Can't write", resultPath);
+						Console.Error.WriteLine("{0} : Can't write", resultPath);
 					}
 					continue;
 				}
@@ -416,7 +416,7 @@ internal static class Program
 					{
 						lock (Console.Out)
 						{
-							Console.Error.WriteLine("{0} Can't undo", resultPath);
+							Console.Error.WriteLine("{0} : Can't undo", resultPath);
 						}
 					}
 				}
@@ -439,11 +439,11 @@ internal static class Program
 			{
 				if (deleteException == null)
 				{
-					Console.Out.WriteLine("{0} {1}", resultPath, took);
+					Console.Out.WriteLine("{0} : {1}", resultPath, took);
 				}
 				else
 				{
-					Console.Out.WriteLine("{0} {1} {2}", resultPath, took, deleteException?.Message);
+					Console.Out.WriteLine("{0} : {1} {2}", resultPath, took, deleteException?.Message);
 				}
 			}
 		}
