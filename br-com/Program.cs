@@ -300,6 +300,8 @@ internal static class Program
 
 	private static int Run()
 	{
+		Console.CancelKeyPress += CancelKeyPress;
+
 		try
 		{
 			var starting = Stopwatch.GetTimestamp();
@@ -342,6 +344,35 @@ internal static class Program
 			files?.Dispose();
 		}
 		return 0;
+	}
+
+	private static void CancelKeyPress(object? sender, ConsoleCancelEventArgs args)
+	{
+		args.Cancel = true;
+
+		var locked = false;
+		try
+		{
+			Monitor.Enter(filess, ref locked);
+			if (!locked)
+			{
+				return;
+			}
+			while (files.MoveNext()) ;
+			while (filess.TryDequeue(out var dequeue)) ;
+		}
+		finally
+		{
+			if (locked)
+			{
+				Monitor.Exit(filess);
+			}
+		}
+
+		lock (Console.Out)
+		{
+			Console.Error.WriteLine("Cancel Key Pressed : will not start any new compressions");
+		}
 	}
 
 	private static void Work()
