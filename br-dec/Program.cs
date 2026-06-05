@@ -20,9 +20,7 @@ internal static class Program
 		return Run();
 	}
 
-	private static string? searchPath = null;
-	private static string? searchPattern = null;
-	private static SearchOption searchOption = SearchOption.AllDirectories;
+	private static readonly Queue<IEnumerable<string>> filess = new Queue<IEnumerable<string>>();
 	private static FileShare searchShare = FileShare.None;
 	private static Converter<string, string> resultPath;
 	private static string? resultPathExt;
@@ -50,36 +48,48 @@ internal static class Program
 				errors.Add("Invalid Parameter " + args[i]);
 				break;
 
-			case "-SearchPath":
+			case "-Search":
 				try
 				{
-					searchPath = args[++i];
+					var path = args[++i];
+					var pattern = args[++i];
+					var optionParse = args[++i];
+					SearchOption option;
+					switch (optionParse)
+					{
+					default:
+						option = Enum.Parse<SearchOption>(optionParse);
+						break;
+
+					case "All":
+					case "all":
+						option = SearchOption.AllDirectories;
+						break;
+
+					case "Top":
+					case "top":
+						option = SearchOption.TopDirectoryOnly;
+						break;
+					}
+					var files = new FilesEnumerable(path, pattern, option);
+					filess.Enqueue(files);
 				}
 				catch (Exception exception)
 				{
-					errors.Add("Problems processing -SearchPath " + exception.Message);
+					errors.Add("Problems processing -Search " + exception.Message);
 				}
 				break;
 
-			case "-SearchPattern":
+			case "-File":
 				try
 				{
-					searchPattern = args[++i];
+					var path = args[++i];
+					var files = new string[1] { path };
+					filess.Enqueue(files);
 				}
 				catch (Exception exception)
 				{
-					errors.Add("Problems processing -SearchPattern " + exception.Message);
-				}
-				break;
-
-			case "-SearchOption":
-				try
-				{
-					searchOption = Enum.Parse<SearchOption>(args[++i]);
-				}
-				catch (Exception exception)
-				{
-					errors.Add("Problems processing -SearchOption " + exception.Message);
+					errors.Add("Problems processing -File " + exception.Message);
 				}
 				break;
 
@@ -196,14 +206,11 @@ internal static class Program
 			}
 		}
 
-		if (searchPath == null)
+		if (filess.Count <= 0)
 		{
-			searchPath = ".";
+			errors.Add("Requires atleast one -Search -File");
 		}
-		if (searchPattern == null)
-		{
-			errors.Add("Missing -SearchPattern");
-		}
+
 		if (resultPath == null)
 		{
 			resultPath = ResultPathExtRemove;
@@ -223,14 +230,10 @@ internal static class Program
 	{
 		Console.WriteLine();
 		Console.WriteLine("br-dec.exe");
-		Console.WriteLine(" Required");
-		Console.WriteLine("  -SearchPattern *.*");
-		Console.WriteLine(" Optional only one");
-		Console.WriteLine("  -ResultPathExtRemove");
-		Console.WriteLine("  -ResultPathExtReplace .ext");
+		Console.WriteLine(" Requires atleast one");
+		Console.WriteLine("  -Search Path Pattern { All, Top, AllDirectories, TopDirectoryOnly }");
+		Console.WriteLine("  -File Path\\File.ext");
 		Console.WriteLine(" Optional");
-		Console.WriteLine("  -SearchPath .");
-		Console.WriteLine("  -SearchOption { AllDirectories, TopDirectoryOnly }");
 		Console.WriteLine("  -SearchShare { None, Read }");
 		Console.WriteLine("  -Delete { false, true }");
 		Console.WriteLine("  -Threads 1 //0 use the number of processors");
@@ -276,7 +279,7 @@ internal static class Program
 				Process.GetCurrentProcess().PriorityClass = processPriority.Value;
 			}
 
-			files = Directory.EnumerateFiles(searchPath, searchPattern, searchOption).GetEnumerator();
+			files = filess.Dequeue().GetEnumerator();
 
 			var threads = new Thread[threadsCount];
 			var threadStart = new ThreadStart(Work);
@@ -321,28 +324,32 @@ internal static class Program
 			var locked = false;
 			try
 			{
-				Monitor.Enter(files, ref locked);
-				if (locked)
+				Monitor.Enter(filess, ref locked);
+				if (!locked)
+				{
+					return;
+				}
+				while (true)
 				{
 					if (files.MoveNext())
 					{
 						sourcePath = files.Current;
-					}
-					else
-					{
 						break;
 					}
-				}
-				else
-				{
-					break;
+					if (!filess.TryDequeue(out var dequeue))
+					{
+						return;
+					}
+					files.Dispose();
+					files = dequeue.GetEnumerator();
+					continue;
 				}
 			}
 			finally
 			{
 				if (locked)
 				{
-					Monitor.Exit(files);
+					Monitor.Exit(filess);
 				}
 			}
 
