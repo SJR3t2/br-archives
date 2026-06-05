@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="br-com/br-com.csproj" />
   <Project Path="br-dec/br-dec.csproj" />
+  <Project Path="br-share/br-share.csproj" Id="965bd213-4af6-4791-b3c5-a291ef522256" />
 </Solution>
