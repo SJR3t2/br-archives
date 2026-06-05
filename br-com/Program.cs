@@ -304,12 +304,13 @@ internal static class Program
 
 		try
 		{
-			var starting = Stopwatch.GetTimestamp();
-
 			if (processPriority.HasValue)
 			{
 				Process.GetCurrentProcess().PriorityClass = processPriority.Value;
 			}
+
+			var starting = Stopwatch.GetTimestamp();
+			Console.WriteLine("{0:dd HH:mm:ss.fff} Started", DateTime.Now);
 
 			files = filess.Dequeue().GetEnumerator();
 
@@ -332,7 +333,7 @@ internal static class Program
 			}
 
 			var took = Stopwatch.GetElapsedTime(starting);
-			Console.WriteLine("Compressed {0} {1}", filesCount, took);
+			Console.WriteLine("{0:dd HH:mm:ss.fff} Compressed {1} {2}", DateTime.Now, filesCount, took);
 		}
 		catch (Exception exception)
 		{
@@ -349,6 +350,11 @@ internal static class Program
 	private static void CancelKeyPress(object? sender, ConsoleCancelEventArgs args)
 	{
 		args.Cancel = true;
+
+		lock (Console.Out)
+		{
+			Console.Error.WriteLine("{0:dd HH:mm:ss.fff} Cancel Key Pressed : will not start any new compressions", DateTime.Now);
+		}
 
 		var locked = false;
 		try
@@ -367,11 +373,6 @@ internal static class Program
 			{
 				Monitor.Exit(filess);
 			}
-		}
-
-		lock (Console.Out)
-		{
-			Console.Error.WriteLine("Cancel Key Pressed : will not start any new compressions");
 		}
 	}
 
@@ -430,7 +431,7 @@ internal static class Program
 				{
 					lock (Console.Out)
 					{
-						Console.Error.WriteLine("{0} : Can't open", sourcePath);
+						Console.Error.WriteLine("{0:dd HH:mm:ss.fff} {1} : Can't open", DateTime.Now, sourcePath);
 					}
 					continue;
 				}
@@ -442,7 +443,7 @@ internal static class Program
 				{
 					lock (Console.Out)
 					{
-						Console.Error.WriteLine("{0} : Can't create", sourcePath);
+						Console.Error.WriteLine("{0:dd HH:mm:ss.fff} {1} : Can't create", DateTime.Now, sourcePath);
 					}
 					continue;
 				}
@@ -464,7 +465,7 @@ internal static class Program
 					resultUndo = true;
 					lock (Console.Out)
 					{
-						Console.Error.WriteLine("{0} : Can't write", sourcePath);
+						Console.Error.WriteLine("{0:dd HH:mm:ss.fff} {1} : Can't write", DateTime.Now, sourcePath);
 					}
 					continue;
 				}
@@ -484,7 +485,7 @@ internal static class Program
 					{
 						lock (Console.Out)
 						{
-							Console.Error.WriteLine("{0} : Can't undo", sourcePath);
+							Console.Error.WriteLine("{0:dd HH:mm:ss.fff} {1} : Can't undo", DateTime.Now, sourcePath);
 						}
 					}
 				}
@@ -507,11 +508,11 @@ internal static class Program
 			{
 				if (deleteException == null)
 				{
-					Console.Out.WriteLine("{0} : {1}", sourcePath, took);
+					Console.Out.WriteLine("{0:dd HH:mm:ss.fff} {1} {2}", DateTime.Now, took, sourcePath);
 				}
 				else
 				{
-					Console.Out.WriteLine("{0} : {1} {2}", sourcePath, took, deleteException?.Message);
+					Console.Out.WriteLine("{0:dd HH:mm:ss.fff} {1} {2} : {3}", DateTime.Now, took, sourcePath, deleteException?.Message);
 				}
 			}
 		}
