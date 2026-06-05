@@ -303,7 +303,7 @@ internal static class Program
 			}
 
 			var took = Stopwatch.GetElapsedTime(starting);
-			Console.WriteLine("{0:dd HH:mm:ss.fff} Deompressed {1} {2}", DateTime.Now, filesCount, took);
+			Console.WriteLine("{0:dd HH:mm:ss.fff} {1:hh\\:mm\\:ss.fff} Deompressed {2}", DateTime.Now, took, filesCount);
 		}
 		catch (Exception exception)
 		{
