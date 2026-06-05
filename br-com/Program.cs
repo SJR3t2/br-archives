@@ -353,7 +353,7 @@ internal static class Program
 
 		lock (Console.Out)
 		{
-			Console.Error.WriteLine("{0:dd HH:mm:ss.fff} Cancel Key Pressed : will not start any new compressions", DateTime.Now);
+			Console.Error.WriteLine("{0:dd HH:mm:ss.fff} Canceled     will not start any new compressions", DateTime.Now);
 		}
 
 		var locked = false;
@@ -431,7 +431,7 @@ internal static class Program
 				{
 					lock (Console.Out)
 					{
-						Console.Error.WriteLine("{0:dd HH:mm:ss.fff} {1} : Can't open", DateTime.Now, sourcePath);
+						Console.Error.WriteLine("{0:dd HH:mm:ss.fff} Can't open   {1}", DateTime.Now, sourcePath);
 					}
 					continue;
 				}
@@ -443,7 +443,7 @@ internal static class Program
 				{
 					lock (Console.Out)
 					{
-						Console.Error.WriteLine("{0:dd HH:mm:ss.fff} {1} : Can't create", DateTime.Now, sourcePath);
+						Console.Error.WriteLine("{0:dd HH:mm:ss.fff} Can't create {1}", DateTime.Now, sourcePath);
 					}
 					continue;
 				}
@@ -465,7 +465,7 @@ internal static class Program
 					resultUndo = true;
 					lock (Console.Out)
 					{
-						Console.Error.WriteLine("{0:dd HH:mm:ss.fff} {1} : Can't write", DateTime.Now, sourcePath);
+						Console.Error.WriteLine("{0:dd HH:mm:ss.fff} Can't write {1}", DateTime.Now, sourcePath);
 					}
 					continue;
 				}
@@ -485,7 +485,7 @@ internal static class Program
 					{
 						lock (Console.Out)
 						{
-							Console.Error.WriteLine("{0:dd HH:mm:ss.fff} {1} : Can't undo", DateTime.Now, sourcePath);
+							Console.Error.WriteLine("{0:dd HH:mm:ss.fff} Can't undo   {1}", DateTime.Now, sourcePath);
 						}
 					}
 				}
@@ -508,11 +508,11 @@ internal static class Program
 			{
 				if (deleteException == null)
 				{
-					Console.Out.WriteLine("{0:dd HH:mm:ss.fff} {1} {2}", DateTime.Now, took, sourcePath);
+					Console.Out.WriteLine("{0:dd HH:mm:ss.fff} {1:hh\\:mm\\:ss.fff} {2}", DateTime.Now, took, sourcePath);
 				}
 				else
 				{
-					Console.Out.WriteLine("{0:dd HH:mm:ss.fff} {1} {2} : {3}", DateTime.Now, took, sourcePath, deleteException?.Message);
+					Console.Out.WriteLine(@"{0:dd HH:mm:ss.fff} {1:hh\:mm\:ss.fff} {2} : {3}", DateTime.Now, took, sourcePath, deleteException?.Message);
 				}
 			}
 		}
