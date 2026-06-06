@@ -149,7 +149,7 @@ internal static class Program
 						threadPriority = Enum.Parse<ThreadPriority>(parse);
 						break;
 
-					case "Leave":
+					case "null":
 						threadPriority = null;
 						break;
 					}
@@ -170,7 +170,7 @@ internal static class Program
 						processPriority = Enum.Parse<ProcessPriorityClass>(parse);
 						break;
 
-					case "Leave":
+					case "null":
 						processPriority = null;
 						break;
 					}
@@ -237,7 +237,8 @@ internal static class Program
 		Console.WriteLine("  -SearchShare { None, Read }");
 		Console.WriteLine("  -Delete { false, true }");
 		Console.WriteLine("  -Threads 1 //0 use the number of processors");
-		Console.WriteLine("  -ThreadPriority { Lowest, BelowNormal, Normal, AboveNormal, Highest, Leave }");
+		Console.WriteLine("  -ThreadPriority { Lowest, BelowNormal, Normal, AboveNormal, Highest, null }");
+		Console.WriteLine("  -ProcessPriority { Idle, BelowNormal, Normal, AboveNormal, High, RealTime, null }");
 		Console.WriteLine(" Optional only one");
 		Console.WriteLine("  -ResultPathExtRemove");
 		Console.WriteLine("  -ResultPathExtReplace .ext");
