@@ -479,7 +479,7 @@ internal static class Program
 			{
 				if (deleteException == null)
 				{
-					Console.Out.WriteLine(@"{0:dd HH:mm:ss.fff} {1:hh\:mm\:ss\.fff}", DateTime.Now, took, resultPath);
+					Console.Out.WriteLine(@"{0:dd HH:mm:ss.fff} {1:hh\:mm\:ss\.fff} {2}", DateTime.Now, took, resultPath);
 				}
 				else
 				{
