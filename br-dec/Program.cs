@@ -304,7 +304,7 @@ internal static class Program
 			}
 
 			var took = Stopwatch.GetElapsedTime(starting);
-			Console.WriteLine("{0:dd HH:mm:ss.fff} {1:hh\\:mm\\:ss.fff} Deompressed {2}", DateTime.Now, took, filesCount);
+			Console.WriteLine(@"{0:dd HH:mm:ss.fff} {1:hh\:mm\:ss\.fff} Deompressed {2}", DateTime.Now, took, filesCount);
 		}
 		catch (Exception exception)
 		{
@@ -479,11 +479,11 @@ internal static class Program
 			{
 				if (deleteException == null)
 				{
-					Console.Out.WriteLine("{0:dd HH:mm:ss.fff} {1:hh\\:mm\\:ss.fff}", DateTime.Now, took, resultPath);
+					Console.Out.WriteLine(@"{0:dd HH:mm:ss.fff} {1:hh\:mm\:ss\.fff}", DateTime.Now, took, resultPath);
 				}
 				else
 				{
-					Console.Out.WriteLine("{0:dd HH:mm:ss.fff} {1:hh\\:mm\\:ss.fff} {2} : {3}", DateTime.Now, took, resultPath, deleteException?.Message);
+					Console.Out.WriteLine(@"{0:dd HH:mm:ss.fff} {1:hh\:mm\:ss\.fff} {2} : {3}", DateTime.Now, took, resultPath, deleteException?.Message);
 				}
 			}
 		}
