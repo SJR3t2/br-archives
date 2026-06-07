@@ -18,7 +18,7 @@ internal static class Program
 			return -1;
 		}
 		Prepare();
-		return Run();
+		return Execute();
 	}
 
 	private static readonly Queue<IEnumerable<string>> filess = new Queue<IEnumerable<string>>();
@@ -298,7 +298,7 @@ internal static class Program
 		threadsCount = Environment.ProcessorCount;
 	}
 
-	private static int Run()
+	private static int Execute()
 	{
 		Console.CancelKeyPress += CancelKeyPress;
 
